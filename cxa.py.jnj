@@ -1,0 +1,90 @@
+import argparse
+import subprocess
+import sys
+import os
+
+
+def get_commands():
+    return [x for x, y in Commands.__dict__.items() if type(y) == staticmethod]
+
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("command", choices=get_commands())
+    return parser.parse_known_args()
+
+
+def main():
+    args = get_args()
+    getattr(Commands, args[0].command)(sys.argv[2:])
+
+
+class Commands:
+    @staticmethod
+    def build(*args, **kwargs):
+        print("No building to be done for Python")
+
+    @staticmethod
+    def format(args):
+        print("=" * 30)
+        print("Running isort")
+        call_command(
+            "isort -rc ./src " + " ".join(args)
+        )
+        print("=" * 30)
+
+        print("Running Black")
+        call_command("black ./src " + " ".join(args))
+        print("=" * 30)
+
+    @staticmethod
+    def install(args):
+        print("=" * 30)
+        print("Installing Pipenv dependencies")
+        call_command("pipenv install --dev " + " ".join(args))
+        print("=" * 30)
+
+    @staticmethod
+    def lint(args):
+        print("=" * 30)
+        print("Running isort")
+        call_command(
+            "isort -rc --check-only ./src " + " ".join(args)
+        )
+        print("=" * 30)
+
+        print("Running Black")
+        print("=" * 30)
+        call_command("black ./src --check")
+        print("=" * 30)
+
+        print("Running Flake8")
+        print("=" * 30)
+        call_command("flake8 ./src")
+        print("=" * 30)
+
+    @staticmethod
+    def run(args):
+        call_command("flask run " + " ".join(args), {"FLASK_APP": "src/{{project_name}}/main.py"})
+
+    @staticmethod
+    def list(args):
+        print("Available Commands:")
+        for command in get_commands():
+            print(command)
+
+    @staticmethod
+    def test(args):
+        print("Running tests with pytest")
+        call_command("pytest test " + " ".join(args))
+
+
+def call_command(cmd, env=None):
+    real_env = dict(os.environ)
+    if env is not None:
+        real_env.update(env)
+    subprocess.run(cmd, stderr=sys.stderr, stdout=sys.stdout, stdin=sys.stdin, env=real_env)
+
+
+if __name__ == "__main__":
+    main()

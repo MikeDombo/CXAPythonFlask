@@ -1,0 +1,46 @@
+schema_version: 1
+title: CXA Basic Python Web Server
+description: A Python 3.7 based Flask web server that comes with code formatting and linting
+language: python
+language_version: 3.7
+uses_template_variables: true
+code_type:
+    server:
+        - web
+author: Michael Dombrowski
+license: BSD 3-clause
+repository: https://github.com/MikeDombo/CXAPythonFlask
+required_template_variables:
+    project_name:
+        type: string
+        validation: regexNoMatch(\s)
+        display_name: Project Name
+        hint: Project name without spaces, used as Python module name
+    project_human_name:
+        type: string
+        display_name: Project Human Name
+        hint: Project name used when packaging Python project
+    author:
+        type: string
+        display_name: Author
+    author_email:
+        type: opt(string)
+        display_name: Author's Email
+    website:
+        type: opt(string)
+        display_name: Website
+    repository:
+        type: opt(string)
+        display_name: Repository URL
+    license:
+        type: opt(string)
+        display_name: License
+    max_line_length:
+        display_name: Maximum Line Length
+        hint: Maximum allowed line length
+        type: integer
+        validation:
+            min: 0
+    description:
+        type: opt(string)
+        display_name: Description
